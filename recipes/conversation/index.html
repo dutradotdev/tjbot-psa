@@ -1,0 +1,27 @@
+<html>
+<head>
+<title></title>
+<script src="js/instascan.min.js"></script>
+<script src="node_modules/jquery/dist/jquery.min.js"></script>
+<script src="node_modules/socket.io-client/dist/socket.io.js"></script>
+</head>
+<body>
+<video id="preview" class="active"></video>
+
+<script>
+	let socket = io.connect("http://localhost:3000");
+
+	const scanner = new Instascan.Scanner({
+		video: document.getElementById('preview')	
+	});
+
+	scanner.addListener('scan', function(content){
+		socket.emit("qrcodeRead",content);
+		console.log('Conteudo escaneado:', content);
+	});
+	
+	Instascan.Camera.getCameras().then(cameras => cameras.length > 0 ? scanner.start(cameras[0]) : console.error('sem cameras') );
+
+</script>
+</body>
+</html>
